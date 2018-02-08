@@ -32,8 +32,8 @@ app.use(bodyParser.json())
 app.get('/info', (req, res) => {
     const size = persons.length
     let now = new Date()
-    const front =`<p>puhelinluettelossa on ${size} henkilön tiedot</p>` + now
-    console.log('nyt',now)
+    const front = `<p>puhelinluettelossa on ${size} henkilön tiedot</p>` + now
+    console.log('nyt', now)
     res.send(front)
 })
 
@@ -53,15 +53,22 @@ app.get('/api/persons/:id', (request, response) => {
 })
 
 const generateId = () => {
-    const maxId = persons.length > 0 ? persons.map(n => n.id).sort().reverse()[0] : 1
-    return maxId + 1
+    return Math.floor(Math.random() * Math.floor(1000))
 }
 
 app.post('/api/persons', (request, response) => {
     const body = request.body
 
-    if (body.name === undefined) {
-        return response.status(400).json({ error: 'content missing' })
+    console.log(body.name)
+    console.log(body.number)
+    if (body.name === undefined || body.name === "") {
+        return response.status(400).json({ error: 'name missing' })
+    }
+    if (body.number === undefined || body.number === "") {
+        return response.status(400).json({ error: 'number missing' })
+    }
+    if (persons.filter(person => person.name === body.name).length !== 0) {
+        return response.status(400).json({ error: 'name already in the list' })
     }
 
     const person = {

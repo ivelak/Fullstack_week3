@@ -1,1 +1,5 @@
+<<<<<<< HEAD
 Delete http://localhost:3001/api/persons/:id
+=======
+DELETE http://localhost:3001/api/persons/1
+>>>>>>> e0676f84e6f111fcab54b22f57ab156e0ee21841

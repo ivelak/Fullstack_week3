@@ -1,12 +1,21 @@
 const mongoose = require('mongoose')
-const url = 'mongodb://fullstack:***@ds227858.mlab.com:27858/fullstack_phonebook'
+const Schema = mongoose.Schema;
+const url = process.env.MONGODB_URI
 
 mongoose.connect(url)
-
-const Person = mongoose.model('Person', {
-
+const schema = new Schema({
     name: String,
     number: String
 })
+schema.statics.format = function () {
+    console.log('format')
+    return {
+        name: person.name,
+        number: person.number,
+        id: person._id
+    }
+}
+
+const Person = mongoose.model('Person', schema)
 
 module.exports = Person

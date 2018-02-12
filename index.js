@@ -12,8 +12,12 @@ const formatPerson = (person) => {
         id: person._id
     }
 }
+morgan.token('type', (req,res) => {
+    return JSON.stringify(req.body)
+})
+app.use(morgan(':method :url :type :status :res[content-length] - :response-time ms'))
 
-app.use(morgan('tiny'))
+
 app.use(cors())
 
 app.use(express.static('build'))
@@ -46,15 +50,15 @@ app.use(bodyParser.json())
 
 
 app.get('/info', (req, res) => {
-    let size = 0
-    Person.count({})
-        .then(persons => {this.size = persons.length()})
-    console.log(size)
-        
-    let now = new Date()
-    const front = `<p>puhelinluettelossa on ${size} henkilön tiedot</p>` + now
-    console.log('nyt', now)
-    res.send(front)
+    Person.count({}, function (err, count) {
+        console.log(count)
+        let now = new Date()
+        const front = `<p>puhelinluettelossa on ${count} henkilön tiedot</p>` + now
+        console.log('nyt', now)
+        res.send(front)
+    })
+
+
 })
 
 app.get('/api/persons', (req, res) => {
@@ -101,6 +105,7 @@ app.post('/api/persons', (request, response) => {
         return response.status(400).json({ error: 'name already in the list' })
     }
 
+    
     const person = new Person({
         name: body.name,
         number: body.number
@@ -109,10 +114,12 @@ app.post('/api/persons', (request, response) => {
     */
     })
 
+    
     person
         .save()
-        .then(savedPerson => {
-            response.json(formatPerson(savedPerson))
+        .then(formatPerson)
+        .then(savedAndFormattedPerson => {
+            response.json(savedAndFormattedPerson)
         })
         .catch(error => {
             console.log(error)

@@ -65,7 +65,11 @@ app.get('/api/persons', (req, res) => {
     Person
         .find({})
         .then(persons => {
-            res.json(persons.map(formatPerson))
+            res.json(persons.map(Person.format))
+        })
+        .catch(error => {
+            console.log(error)
+            res.status(404).end()
         })
 })
 
@@ -74,7 +78,7 @@ app.get('/api/persons/:id', (request, response) => {
         .findById(request.params.id)
         .then(person => {
             if (person) {
-                response.json(formatPerson(person))
+                response.json(Person.format(person))
             } else {
                 response.status(404).end()
             }
